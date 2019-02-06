@@ -1,1 +1,1 @@
-{"type":"Mysql","dbname":"dbname","username":"root","passwd":""}
+{"type":"mysql","dbname":"notes","username":"root","passwd":""}
