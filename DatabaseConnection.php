@@ -38,5 +38,5 @@ class DatabaseConnection
 
 }
 
-$f = DataBaseConnection::inst("mySql");
-print_r($f->getConfig());
+//$f = DataBaseConnection::inst("mySql");
+//print_r($f->getConfig());
