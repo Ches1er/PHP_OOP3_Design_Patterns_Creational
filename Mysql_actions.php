@@ -4,10 +4,12 @@ include "DatabaseConnection.php";
 
 class DBActions{
     private $config;
+    private $subscribers = [];
 
     public function __construct(DataBaseConnection $config)
     {
         $this->config = $config;
+        $this->subscribers = $this->DBSelectAll("subscribers");
     }
     private function MakeDbh(){
         static $dbh =null;
@@ -57,11 +59,16 @@ class DBActions{
         return $stmt->fetchAll();
     }
 
-    public function DBSelectAll(string $table,string $criteria,string $direction){
+    public function DBSelectAllWSort(string $table,string $criteria,string $direction){
         //Where "criteria" means order by criteria, direction "DESC" or "ASC"
         $direct=$this->MakeDbh()->quote($direction);
         $direct=substr($direct,1,strlen($direct)-2);
         $stmt=$this->MakeDbh()->query("SELECT * FROM `{$table}` ORDER BY {$criteria} {$direct}");
+        return $stmt->fetchAll();
+    }
+
+    public function DBSelectAll(string $table){
+        $stmt=$this->MakeDbh()->query("SELECT * FROM `{$table}`");
         return $stmt->fetchAll();
     }
 
@@ -85,6 +92,19 @@ class DBActions{
         return (int)($this->MakeDbh()->query($q)->fetchColumn());
     }
 
+    //Add Message to subscribers
+
+    public function AddSubscribersMessage(string $message,string $type)
+    {
+        $q = "DELETE FROM `subscribers`";
+        $stmt = $this->MakeDbh()->prepare($q);
+        $stmt->execute();
+
+        foreach ($this->subscribers as &$subscriber) {
+            if ($subscriber["type"]===$type)$subscriber["message"] = $message;
+        }
+        $this->DBInsertAll("subscribers", $this->subscribers);
+    }
 }
 
 

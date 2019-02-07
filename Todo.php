@@ -148,6 +148,11 @@ class DBUserAction extends DBActions implements UserAction{
     public function AddUser(User $data)
     {
         $this->DBInsert("users",$data->GetUser());
+
+        //Add Message to subscribers
+
+        $this->AddSubscribersMessage("add new user {$data->GetUser()["user_name"]}",
+            "adduser");
     }
 
     public function ShowNotes(string $id)
@@ -163,6 +168,8 @@ class DBNotesAction extends DBActions implements NoteAction{
         $new_note=$note->GetNote();
         $new_note["user_id"]=$user_id;
         $this->DBInsert("todo",$new_note);
+        $this->AddSubscribersMessage("add new note {$note->GetNote()["note_name"]}",
+            "addnote");
     }
 
     public function DelNote($user_id, string $id)
@@ -186,5 +193,8 @@ $j->AddNote("1549445151_250424121876",$n);*/
 /*$n = new DBNotes("buy","buy smth");
 $db = new DBNotesAction(DataBaseConnection::inst("mySql"));
 $db->AddNote(1,$n);*/
+
+$n = new DBUserAction(DataBaseConnection::inst("mySql"));
+$n->AddUser(new DBUser("admin"));
 
 
